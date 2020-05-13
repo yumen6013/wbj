@@ -7,16 +7,19 @@ import org.jsoup.select.Elements;
 import util.HtmlUtil;
 import util.IntegerUtil;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 public class TestThread1 {
 
     /**
      *
      */
     private static String baseUrl = "http://comic.kkkkdm.com/";
-    private static String baseImgUrl = "";
+    private static String baseImgUrl = "http://v2.kukudm.com/";
 
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws UnsupportedEncodingException {
 //        List<String> idList = HtmlUtil.getIdList(id);
         Document document = HtmlUtil.getDocment("http://comic.kkkkdm.com/comiclist/2549/index.htm", "gbk");
 
@@ -44,51 +47,24 @@ public class TestThread1 {
             //遍历这话漫画下所有的图片
             for (int i = 0; i < pageNum; i++) {
                 int page = i+1;
-                String tempHref = ahref.replace("1.html",page+".html");
+                String tempHref = ahref.replace("1.htm",page+".htm");
                 String tempurl = baseUrl + tempHref;
                 String temphtmlStr = HtmlUtil.getHtmlStr(tempurl, "gbk");
                 //下载图片
-                downliadPage2(htmlStr,title);
+                downliadPage2(temphtmlStr,title,pageNum,page);
             }
             System.out.println();
         }
-
-//        downliadPage2(htmlStr,title);
-        String alldir = "";
-//        if (idList.size() > 1) {
-//            String url = "https://123.com" + id + "/";
-//            alldir = HtmlUtil.getTitle(url);
-//            String regEx = "[\n`~!@#$%^&*()+=|{}':;',\\[\\].<>?~！@#￥%……&*（）——+|{}【】‘；：”“’。， 、？]";
-//            alldir = alldir.replaceAll(regEx, "");
-//            String[] titles = alldir.split("/");
-//            alldir = titles[titles.length - 1];
-//            alldir = id + alldir.substring(0, alldir.length() - 11) + "\\";
-//        }
-//        for (String tempId : idList) {
-//            downliadPage(tempId, alldir);
-//        }
     }
 
     /**
-     * 功能描述: 获取页码
+     * 功能描述: 获取漫画单页
      *
      * @param: [context]
      * @return: java.lang.String
      * @date: 2018/7/12 0012 11:18
      */
-    public static Integer getPageNum(String str) {
-        Document document = Jsoup.parse(str);
-        Elements tdEleList = document.select("td[valign='top']");
-        if (tdEleList.size() < 0) {
-            return 0;
-        }
-        Element tempItem = tdEleList.get(0);
-        String text = tempItem.text();
-        String pageNumStr = getPageNumByStr(text).trim();
-        return IntegerUtil.stringToInt(pageNumStr);
-    }
-
-    public static void downliadPage2(String str, String alldir) {
+    public static void downliadPage2(String str, String alldir, int pageNum,int i) throws UnsupportedEncodingException {
         Document document = Jsoup.parse(str);
         Elements scriptEleList = document.select("script[language='javascript']");
         for (Element postItem : scriptEleList) {
@@ -106,28 +82,42 @@ public class TestThread1 {
             }
             //获取第一个图片标签
             Element temp = imgEleList.get(0);
-            String imgUrl = temp.attr("src");
-            imgUrl = ClearQuote(imgUrl);
+            String imgPathUrl = temp.attr("src");
+            imgPathUrl = ClearQuote(imgPathUrl);
+            imgPathUrl = URLEncoder.encode(imgPathUrl, "UTF-8");
+            String imgUrl = baseImgUrl + imgPathUrl;
+            System.out.println(imgUrl);
+            //去空格
+            String regEx = "[\n`~!@#$%^&*()+=|{}':;',\\[\\].<>?~！@#￥%……&*（）——+|{}【】‘；：”“’。， 、？]";
+            alldir = alldir.replaceAll(regEx, "");
+            //中文改
+//            imgUrl = new String(imgUrl.toString().getBytes("UTF-8"));
+            RunnableDemo1 R1 = new RunnableDemo1("Thread-" + alldir, "",
+                    "页数" + pageNum + alldir, i, "",imgUrl);
+            R1.start();
+
         }
     }
 
-
-    public static void downliadPage(String fileSrc, String alldir) {
-        String url = "https://123,com" + fileSrc + "/";
-        int pageNum = HtmlUtil.getPageNumByPhoto(url);
-        String title = HtmlUtil.getTitle(url);
-        String regEx = "[\n`~!@#$%^&*()+=|{}':;',\\[\\].<>?~！@#￥%……&*（）——+|{}【】‘；：”“’。， 、？]";
-        title = title.replaceAll(regEx, "");
-        String[] titles = title.split("/");
-        title = titles[titles.length - 1];
-        title = title.substring(0, title.length() - 11);
-
-//        for (int j = 1; j < pageNum + 1; j++) {
-//            RunnableDemo1 R1 = new RunnableDemo1("Thread-" + fileSrc, fileSrc,
-//                    "页数" + pageNum + title, j, alldir);
-//            R1.start();
-//        }
+    /**
+     * 功能描述: 获取漫画页数
+     *
+     * @param: [context]
+     * @return: java.lang.String
+     * @date: 2018/7/12 0012 11:18
+     */
+    public static Integer getPageNum(String str) {
+        Document document = Jsoup.parse(str);
+        Elements tdEleList = document.select("td[valign='top']");
+        if (tdEleList.size() < 0) {
+            return 0;
+        }
+        Element tempItem = tdEleList.get(0);
+        String text = tempItem.text();
+        String pageNumStr = getPageNumByStr(text).trim();
+        return IntegerUtil.stringToInt(pageNumStr);
     }
+
 
     /**
      * 功能描述: 去掉document.write(前后

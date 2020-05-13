@@ -10,13 +10,15 @@ public class RunnableDemo1 implements Runnable {
     private String title;
     private String fileSrc;
     private String alldir;
+    private String imgUrl;
 
-    RunnableDemo1(String name, String fileSrc, String title, int pageNum,String alldir) {
+    RunnableDemo1(String name, String fileSrc, String title, int pageNum, String alldir, String imgUrl) {
         this.threadName = name;
         this.title = title;
         this.pageNum = pageNum;
         this.fileSrc = fileSrc;
         this.alldir = alldir;
+        this.imgUrl = imgUrl;
         System.out.println("Creating " + threadName + title + pageNum);
     }
 
@@ -25,15 +27,16 @@ public class RunnableDemo1 implements Runnable {
         String titleImg = IntegerUtil.intStr(1);
         String filename = IntegerUtil.intStr(pageNum);
         //输网址
-        String url = "https://123.com";
-        if(pageNum == 1){
+        String url = imgUrl;
+        String filePath = "D:\\upload\\";
+        if (pageNum == 1) {
             try {
-                System.out.println(url + fileSrc + "/" +
-                        titleImg + ".jpg");
+                System.out.println(imgUrl);
+                System.out.println(filePath);
+                System.out.println(filePath + alldir);
                 HtmlUtil.download(
-                        url + fileSrc + "/" +
-                                titleImg + ".jpg",
-                        "D:\\upload\\"+alldir, fileSrc + title + ".jpg");
+                        imgUrl,
+                        filePath, fileSrc + title + ".jpg");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -41,8 +44,8 @@ public class RunnableDemo1 implements Runnable {
 
         try {
             HtmlUtil.download(
-                    url + fileSrc + "/" + filename + ".jpg",
-                    "D:\\upload\\"  + alldir + fileSrc + title, filename + ".jpg");
+                    imgUrl,
+                    filePath + alldir + fileSrc + title, filename + ".jpg");
         } catch (Exception e) {
 
         }

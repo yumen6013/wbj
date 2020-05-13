@@ -15,6 +15,9 @@ public class DownloadImage {
      * @param args
      * @throws Exception
      */
+    private static String baseUrl = "http://comic.kkkkdm.com/";
+    private static String baseImgUrl = "http://v2.kukudm.com/";
+
     public static void main(String[] args) throws Exception {
         int length = 300;
         String fileSrcs[] = {

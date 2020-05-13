@@ -20,11 +20,6 @@ import java.net.URLConnection;
 
 public class HtmlUtil {
 
-//    public static void main(String[] args) {
-//        String fileSrc = "144985";
-//        String url = "https://123.com" + fileSrc + "/";
-//        getPageNumByHtml(url);
-//    }
 
     public static String getHtmlStr(String url, String charset) {
         //1.生成httpclient，相当于该打开一个浏览器
@@ -264,6 +259,12 @@ public class HtmlUtil {
         }
         return 0;
     }
+
+//    public static void main(String[] args)throws Exception  {
+//        String fileSrc = "144985";
+//        String url = "http://v2.kukudm.com/newkuku/2018/10/16/%E4%BD%90%E4%BC%AF%E5%90%8C%E5%AD%A6%E7%9D%A1%E7%9D%80%E4%BA%86_%E7%AC%AC01%E8%AF%9D/00012KC.jpg";
+//        String download = download(url, "D:\\upload", "001.jpg");
+//    }
 
     public static String download(String urlPath, String savePath, String filename) throws Exception {
         // 构造URL
