@@ -6,7 +6,7 @@
 
 1.1使用idea最新版
 1.2使用java1.8
-1.3使用最新版maven。
+1.3使用最新版maven。 
 2.POM install运行一下
 3.运行
 \testPro\src\main\java\getImg\TestThread1
